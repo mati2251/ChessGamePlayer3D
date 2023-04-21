@@ -40,6 +40,9 @@ Models::Sphere moon1(0.1, 36, 36);
 Models::Sphere planet2(0.25, 36, 36);
 Models::Sphere moon2(0.07, 36, 36);
 Models::Torus carWheel(0.3, 0.1, 36, 36);
+Models::Cube mainBody;
+Models::Cube leftWing;
+Models::Cube rightWing;
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
@@ -279,6 +282,28 @@ void car2(float angle,float wheelAngle) {
 
 }
 
+void drawSpaceship() {
+	// Main body (a long rectangle)
+	glm::mat4 mainBodyModel = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.2f, 0.5f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(mainBodyModel));
+	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
+	mainBody.drawSolid();
+
+	// Left wing (a shorter rectangle)
+	glm::mat4 leftWingModel = glm::translate(glm::mat4(1.0f), glm::vec3(-0.6f, 0.0f, -0.3f));
+	leftWingModel = glm::scale(leftWingModel, glm::vec3(0.4f, 0.15f, 0.4f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(leftWingModel));
+	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
+	leftWing.drawSolid();
+
+	// Right wing (a shorter rectangle)
+	glm::mat4 rightWingModel = glm::translate(glm::mat4(1.0f), glm::vec3(-0.6f, 0.0f, 0.3f));
+	rightWingModel = glm::scale(rightWingModel, glm::vec3(0.4f, 0.15f, 0.4f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(rightWingModel));
+	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
+	rightWing.drawSolid();
+}
+
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window,float angle,float wheelAngle) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
@@ -292,13 +317,8 @@ void drawScene(GLFWwindow* window,float angle,float wheelAngle) {
 	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V)); //Załadowanie macierzy widoku do programu cieniującego
 	
 	
-	//planets1(angle);
-	//planets2(angle);
-	//cogs1(angle);
-	//cogs2(angle);
-	//cogs3(angle);
-	//car1(angle);
-	car2(angle, wheelAngle);
+
+	drawSpaceship();
 
 	//Skopiowanie bufora ukrytego do widocznego. Z reguły ostatnie polecenie w procedurze drawScene.
 	glfwSwapBuffers(window);
