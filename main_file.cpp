@@ -33,13 +33,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 
 float speed = 0; //Prędkość kątowa obrotu obiektu
-float skret = 0; //skret kół
-Models::Sphere sun(0.5, 36, 36);
-Models::Sphere planet1(0.2, 36, 36);
-Models::Sphere moon1(0.1, 36, 36);
-Models::Sphere planet2(0.25, 36, 36);
-Models::Sphere moon2(0.07, 36, 36);
-Models::Torus carWheel(0.3, 0.1, 36, 36);
+
 Models::Cube mainBody;
 Models::Cube leftWing;
 Models::Cube rightWing;
@@ -48,24 +42,59 @@ void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
 
-//Procedura obsługi klawiatury
-void key_callback(GLFWwindow* window, int key,
-	int scancode, int action, int mods) {
+glm::vec3 cameraPosition(0.0f, 0.0f, 7.0f);
+glm::vec3 cameraVelocity(0.0f);
+glm::vec3 cameraAcceleration(0.0f);
+float cameraYaw = 0.0f;
+float cameraPitch = 0.0f;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	float accelerationAmount = 1.0f;
 
 	if (action == GLFW_PRESS) {
-		if (key == GLFW_KEY_LEFT) speed=-PI; //Jeżeli wciśnięto klawisz "w lewo" ustaw prędkość na -PI
-		if (key == GLFW_KEY_RIGHT) speed = PI; //Jeżeli wciśnięto klawisz "w prawo" ustaw prędkość na PI
-		if (key == GLFW_KEY_A) {
-			skret = PI / 6;
+		if (key == GLFW_KEY_W) {
+			cameraAcceleration.z = -accelerationAmount;
 		}
-		if (key == GLFW_KEY_D) {
-			skret = -PI / 6;
+		if (key == GLFW_KEY_S) {
+			cameraAcceleration.z = accelerationAmount;
 		}
 	}
 
 	if (action == GLFW_RELEASE) {
-		if (key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) speed = 0;
-		if (key == GLFW_KEY_A || key == GLFW_KEY_D) skret = 0;
+		if (key == GLFW_KEY_W || key == GLFW_KEY_S) {
+			cameraAcceleration.z = 0;
+		}
+	}
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+	static double lastX = 0.0;
+	static double lastY = 0.0;
+	static bool firstMouse = true;
+
+	if (firstMouse) {
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+	float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	cameraYaw += xoffset;
+	cameraPitch += yoffset;
+
+	if (cameraPitch > 89.0f) {
+		cameraPitch = 89.0f;
+	}
+	if (cameraPitch < -89.0f) {
+		cameraPitch = -89.0f;
 	}
 }
 
@@ -86,201 +115,6 @@ void freeOpenGLProgram(GLFWwindow* window) {
     //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
 }
 
-void planets1(float angle) {
-	glm::mat4 Ms = glm::mat4(1.0f); //Macierz słońca to macierz jednostkowa
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Ms));  //Załadowanie macierzy modelu do programu cieniującego
-	glUniform4f(spLambert->u("color"), 1, 1, 0, 1); //Słońce ma kolor żółty
-	sun.drawSolid(); //Narysowanie obiektu
-
-
-	glm::mat4 Mp1 = glm::rotate(Ms, angle, glm::vec3(0.0f, 1.0f, 0.0f)); //Macierz planety to macierz słońca pomnożona razy macierz obrotu
-	Mp1 = glm::translate(Mp1, glm::vec3(1.5f, 0.0f, 0.0f)); //...i macierz przesunięcia
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mp1));  //Załadowanie macierzy modelu do programu cieniującego
-	glUniform4f(spLambert->u("color"), 0, 1, 0, 1); //Planeta jest zielona
-	planet1.drawSolid(); //Narysowanie obiektu
-
-	glm::mat4 Mk1 = glm::rotate(Mp1, angle, glm::vec3(0.0f, 1.0f, 0.0f)); //Macierz księżyca to macierz planety pomnożona razy macierz obrotu
-	Mk1 = glm::translate(Mk1, glm::vec3(0.5f, 0.0f, 0.0f));//...i macierz przesunięcia
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk1));  //Załadowanie macierzy modelu do programu cieniującego
-	glUniform4f(spLambert->u("color"), 0.5, 0.5, 0.5, 1); //Księżyc jest szary
-	moon1.drawSolid(); //Narysowanie obiektu
-}
-
-void planets2(float angle) {
-	glm::mat4 Ms = glm::mat4(1.0f); //Macierz słońca to macierz jednostkowa
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Ms));  //Załadowanie macierzy modelu do programu cieniującego
-	glUniform4f(spLambert->u("color"), 1, 1, 0, 1); //Słońce ma kolor żółty
-	sun.drawSolid(); //Narysowanie obiektu
-
-
-	glm::mat4 Mp1 = glm::rotate(Ms, angle, glm::vec3(0.0f, 1.0f, 0.0f)); //Macierz planety to macierz słońca pomnożona razy macierz obrotu
-	Mp1 = glm::translate(Mp1, glm::vec3(1.5f, 0.0f, 0.0f)); //...i macierz przesunięcia
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mp1));  //Załadowanie macierzy modelu do programu cieniującego
-	glUniform4f(spLambert->u("color"), 0, 1, 0, 1); //Planeta jest zielona
-	planet1.drawSolid(); //Narysowanie obiektu
-
-	glm::mat4 Mk1 = glm::rotate(Mp1, angle, glm::vec3(0.0f, 1.0f, 0.0f)); //Macierz księżyca to macierz planety pomnożona razy macierz obrotu
-	Mk1 = glm::translate(Mk1, glm::vec3(0.5f, 0.0f, 0.0f));//...i macierz przesunięcia
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk1));  //Załadowanie macierzy modelu do programu cieniującego
-	glUniform4f(spLambert->u("color"), 0.5, 0.5, 0.5, 1); //Księżyc jest szary
-	moon1.drawSolid(); //Narysowanie obiektu
-
-	glm::mat4 Mp2 = glm::rotate(Ms, angle, glm::vec3(0.0f, 0.0f, 1.0f));  //Macierz planety to macierz słońca pomnożona razy macierz obrotu
-	Mp2 = glm::translate(Mp2, glm::vec3(2.0f, 0.0f, 0.0f)); //...i macierz przesunięcia
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mp2));  //Załadowanie macierzy modelu do programu cieniującego
-	glUniform4f(spLambert->u("color"), 0, 0, 1, 1); //Planeta jest niebieska
-	planet2.drawSolid();
-	
-	glm::mat4 Mk2 = glm::rotate(Mp2, angle, glm::vec3(1.0f, 0.0f, 0.0f)); //Macierz księżyca to macierz planety pomnożona razy macierz obrotu
-	Mk2 = glm::translate(Mk2, glm::vec3(0.0f, 0.3f, 0.0f));//...i macierz przesunięcia
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk2));  //Załadowanie macierzy modelu do programu cieniującego
-	glUniform4f(spLambert->u("color"), 0.2, 0.2, 0.2, 1); //Księżyc jest szary
-	moon2.drawSolid(); //Narysowanie obiektu
-}
-
-void cogs1(float angle) {
-	glm::mat4 I = glm::mat4(1.0f);
-
-	glm::mat4 Mt1 = glm::translate(I, glm::vec3(-1.0f, 0.0f, 0.0f)); //Macierz torusa to najpierw przesunięcie do odpowiedniej pozycji...
-	Mt1 = glm::rotate(Mt1, angle, glm::vec3(0.0f, 0.0f, 1.0f)); //... potem obrót żeby nasz "tryb" był odpowiednio obrócony
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mt1));  
-	glUniform4f(spLambert->u("color"), 0, 1, 0, 1); 
-	Models::torus.drawSolid();
-
-	glm::mat4 Mt2 = glm::translate(I, glm::vec3(1.0f, 0.0f, 0.0f)); //Macierz torusa to najpierw przesunięcie do odpowiedniej pozycji...
-	Mt2 = glm::rotate(Mt2, -angle, glm::vec3(0.0f, 0.0f, 1.0f)); //... potem obrót żeby nasz "tryb" był odpowiednio obrócony
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mt2));
-	glUniform4f(spLambert->u("color"), 0, 1, 0, 1); 
-	Models::torus.drawSolid();
-}
-
-void drawCog(glm::mat4 Mt,float angleDelta) {
-	//Załaduj macierz modelu i narysuj torus
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mt));
-	glUniform4f(spLambert->u("color"), 0, 1, 0, 1);
-	Models::torus.drawSolid();
-
-	//W pętli narysuj 12 kostek.
-	for (int k = 0; k < 12; k++) {
-		//Macierz kostki to obrót, żeby wybrać kierunek wokół torusa...
-		glm::mat4 Mk = glm::rotate(Mt, glm::radians(k * 30.0f+angleDelta), glm::vec3(0.0f, 0.0f, 1.0f));
-		//...przesunięcie żeby dotrzeć na obrzeże torusa...
-		Mk = glm::translate(Mk, glm::vec3(1.0f, 0.0f, 0.0f));
-		//...i skalowanie żeby pomniejszyć kostkę do porządanych rozmiarów
-		Mk = glm::scale(Mk, glm::vec3(0.1f, 0.1f, 0.1f));
-		glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk));
-		glUniform4f(spLambert->u("color"), 0, 1, 0, 1);
-		Models::cube.drawSolid();
-	}
-}
-
-void cogs2(float angle) {
-	glm::mat4 I = glm::mat4(1.0f);
-
-	glm::mat4 Mt1 = glm::translate(I, glm::vec3(-1.05f, 0.0f, 0.0f)); //Macierz torusa to najpierw przesunięcie do odpowiedniej pozycji...
-	Mt1 = glm::rotate(Mt1, angle, glm::vec3(0.0f, 0.0f, 1.0f)); //... potem obrót żeby nasz "tryb" był odpowiednio obrócony
-	drawCog(Mt1, 0);
-
-	glm::mat4 Mt2 = glm::translate(I, glm::vec3(1.05f, 0.0f, 0.0f)); //Macierz torusa to najpierw przesunięcie do odpowiedniej pozycji...
-	Mt2 = glm::rotate(Mt2, -angle, glm::vec3(0.0f, 0.0f, 1.0f)); //... potem obrót żeby nasz "tryb" był odpowiednio obrócony
-	drawCog(Mt2, 11);
-}
-
-void cogs3(float angle) {
-	//---Poniższy kawałek kodu powtarzamy dla każdego obiektu
-	//Obliczanie macierzy modelu
-	glm::mat4 M = glm::mat4(1.0f);	
-
-	for (int k = 0; k < 6; k++) {
-		glm::mat4 Ml = glm::rotate(M, glm::radians(k * 60.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		Ml = glm::translate(Ml, glm::vec3(2.1f, 0.0f, 0.0f));
-		Ml = glm::rotate(Ml, angle * (k % 2 == 0 ? 1 : -1), glm::vec3(0.0f, 0.0f, 1.0f));
-		drawCog(Ml, k * 15.0f );
-	}
-
-}
-
-void car1(float angle) {
-	glm::mat4 Ms = glm::mat4(1.0f);
-	Ms = glm::rotate(Ms, angle, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	//Podwozie
-	glm::mat4 Mp = glm::scale(Ms, glm::vec3(1.5f, 0.125f, 1.0f));
-	glUniform4f(spLambert->u("color"), 0, 1, 0, 1);
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mp));  //Załadowanie macierzy modelu do programu cieniującego
-	Models::cube.drawSolid(); //Narysowanie obiektu
-
-
-	//Koło1
-	glm::mat4 Mk1 = Ms;
-	Mk1 = glm::translate(Mk1, glm::vec3(1.5f, 0.0f, 1.0f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk1));  //Załadowanie macierzy modelu do programu cieniującego	
-	carWheel.drawWire();
-
-	//Koło2
-	glm::mat4 Mk2 = Ms;
-	Mk2 = glm::translate(Mk2, glm::vec3(1.5f, 0.0f, -1.0f));	
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk2));  //Załadowanie macierzy modelu do programu cieniującego
-	carWheel.drawWire();
-
-	//Koło3
-	glm::mat4 Mk3 = Ms;
-	Mk3 = glm::translate(Mk3, glm::vec3(-1.5f, 0.0f, 1.0f));	
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk3));  //Załadowanie macierzy modelu do programu cieniującego
-	carWheel.drawWire();
-
-	//Koło4
-	glm::mat4 Mk4 = Ms;
-	Mk4 = glm::translate(Mk4, glm::vec3(-1.5f, 0.0f, -1.0f));	
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk4));  //Załadowanie macierzy modelu do programu cieniującego
-	carWheel.drawWire();
-
-
-}
-
-void car2(float angle,float wheelAngle) {	
-	glm::mat4 Ms = glm::mat4(1.0f);
-	Ms = glm::rotate(Ms, angle, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	//Podwozie
-	glm::mat4 Mp = glm::scale(Ms, glm::vec3(1.5f, 0.125f, 1.0f));
-	glUniform4f(spLambert->u("color"), 0, 1, 0, 1);
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mp));  //Załadowanie macierzy modelu do programu cieniującego
-	Models::cube.drawSolid(); //Narysowanie obiektu
-
-
-	//Koło1
-	glm::mat4 Mk1 = Ms;
-	Mk1 = glm::translate(Mk1, glm::vec3(1.5f, 0.0f, 1.0f));
-	Mk1 = glm::rotate(Mk1, skret, glm::vec3(0.0f, 1.0f, 0.0f));
-	Mk1 = glm::rotate(Mk1, wheelAngle, glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk1));  //Załadowanie macierzy modelu do programu cieniującego
-	carWheel.drawWire();
-
-	//Koło2
-	glm::mat4 Mk2 = Ms;
-	Mk2 = glm::translate(Mk2, glm::vec3(1.5f, 0.0f, -1.0f));
-	Mk2 = glm::rotate(Mk2, skret, glm::vec3(0.0f, 1.0f, 0.0f));
-	Mk2 = glm::rotate(Mk2, wheelAngle, glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk2));  //Załadowanie macierzy modelu do programu cieniującego
-	carWheel.drawWire();
-
-	//Koło3
-	glm::mat4 Mk3 = Ms;
-	Mk3 = glm::translate(Mk3, glm::vec3(-1.5f, 0.0f, 1.0f));
-	Mk3 = glm::rotate(Mk3, wheelAngle, glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk3));  //Załadowanie macierzy modelu do programu cieniującego
-	carWheel.drawWire();
-
-	//Koło4
-	glm::mat4 Mk4 = Ms;
-	Mk4 = glm::translate(Mk4, glm::vec3(-1.5f, 0.0f, -1.0f));
-	Mk4 = glm::rotate(Mk4, wheelAngle, glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk4));  //Załadowanie macierzy modelu do programu cieniującego
-	carWheel.drawWire();
-	
-
-}
 
 void drawSpaceship() {
 	// Main body (a long rectangle)
@@ -305,17 +139,25 @@ void drawSpaceship() {
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window,float angle,float wheelAngle) {
+void drawScene(GLFWwindow* window,float angle) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyszczenie bufora kolorów i bufora głębokości
 	
 	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f); //Wyliczenie macierzy rzutowania
-	glm::mat4 V = glm::lookAt(glm::vec3(0.0f, 0.0f, -7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Wyliczenie macierzy widoku
+
+	// Update view matrix
+	glm::vec3 front;
+	front.x = cos(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
+	front.y = sin(glm::radians(cameraPitch));
+	front.z = sin(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
+	glm::vec3 cameraFront = glm::normalize(front);
+	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::mat4 V = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 
 	spLambert->use();//Aktywacja programu cieniującego
 	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P)); //Załadowanie macierzy rzutowania do programu cieniującego
-	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V)); //Załadowanie macierzy widoku do programu cieniującego
-	
+	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V));
+
 	
 
 	drawSpaceship();
@@ -323,7 +165,10 @@ void drawScene(GLFWwindow* window,float angle,float wheelAngle) {
 	//Skopiowanie bufora ukrytego do widocznego. Z reguły ostatnie polecenie w procedurze drawScene.
 	glfwSwapBuffers(window);
 }
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
+float cameraSpeed = 5.0f;
 
 int main(void)
 {
@@ -357,15 +202,31 @@ int main(void)
 
 
 	float angle = 0; //Aktualny kąt obrotu obiektu
-	float wheelAngle = 0; //Aktualny kąt obrotu kół
-	glfwSetTime(0); //Wyzeruj timer
-	//Główna pętla
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
 		angle += speed * glfwGetTime(); //Oblicz przyrost kąta po obrocie
-		wheelAngle += -PI / 6 * glfwGetTime();
-		glfwSetTime(0); //Wyzeruj timer
-		drawScene(window,angle,wheelAngle); //Wykonaj procedurę rysującą
+		deltaTime = glfwGetTime();
+
+
+		// Calculate deltaTime
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		// Update camera velocity and position
+		cameraVelocity += cameraAcceleration * deltaTime;
+		cameraPosition += cameraVelocity * deltaTime;
+
+		// Dampen the camera velocity (simulate drag)
+		cameraVelocity *= 0.95f;
+
+
+		drawScene(window,angle); //Wykonaj procedurę rysującą
+
+		// Set mouse and key callbacks
+		glfwSetCursorPosCallback(window, mouse_callback);
+		glfwSetKeyCallback(window, key_callback);
+
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 
