@@ -33,43 +33,59 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 
 float speed = 0; //Prędkość kątowa obrotu obiektu
+float skret = 0; //skret kół
+Models::Sphere sun(0.5, 36, 36);
+Models::Sphere planet1(0.2, 36, 36);
+Models::Sphere moon1(0.1, 36, 36);
+Models::Sphere planet2(0.25, 36, 36);
+Models::Sphere moon2(0.07, 36, 36);
+Models::Torus carWheel(0.3, 0.1, 36, 36);
 
-Models::Cube mainBody;
-Models::Cube leftWing;
-Models::Cube rightWing;
+
+
+// Camera variables
+glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+
+float cameraSpeed = 0.0f;
+
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
 
-glm::vec3 cameraPosition(0.0f, 0.0f, 7.0f);
+//Procedura obsługi klawiatury
 glm::vec3 cameraVelocity(0.0f);
-glm::vec3 cameraAcceleration(0.0f);
-float cameraYaw = 0.0f;
-float cameraPitch = 0.0f;
+glm::vec3 cameraAcceleration(0.0f, 0.0f, 0.0f);
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	float accelerationAmount = 1.0f;
 
-	if (action == GLFW_PRESS) {
-		if (key == GLFW_KEY_W) {
-			cameraAcceleration.z = -accelerationAmount;
-		}
-		if (key == GLFW_KEY_S) {
-			cameraAcceleration.z = accelerationAmount;
-		}
-	}
 
-	if (action == GLFW_RELEASE) {
-		if (key == GLFW_KEY_W || key == GLFW_KEY_S) {
-			cameraAcceleration.z = 0;
-		}
-	}
+
+
+float yaw = -90.0f; // Yaw is initially set so that the camera is facing along the positive Z-axis
+float pitch = 0.0f;
+glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 cameraRight;
+
+
+void updateCameraVectors() {
+	// Calculate the new cameraFront vector
+	glm::vec3 front;
+	front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	front.y = sin(glm::radians(pitch));
+	front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	cameraFront = glm::normalize(front);
+
+	// Update the cameraRight and cameraUp vectors
+	cameraRight = glm::normalize(glm::cross(cameraFront, worldUp));
+	cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	static double lastX = 0.0;
-	static double lastY = 0.0;
+	static float lastX = 0.0f;
+	static float lastY = 0.0f;
 	static bool firstMouse = true;
 
 	if (firstMouse) {
@@ -83,92 +99,225 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	lastX = xpos;
 	lastY = ypos;
 
-	float sensitivity = 0.1f;
+	float sensitivity = 0.05f;
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
 
-	cameraYaw += xoffset;
-	cameraPitch += yoffset;
+	yaw += xoffset;
+	pitch += yoffset;
 
-	if (cameraPitch > 89.0f) {
-		cameraPitch = 89.0f;
+	// Limit the pitch to avoid gimbal lock
+	if (pitch > 89.0f) {
+		pitch = 89.0f;
 	}
-	if (cameraPitch < -89.0f) {
-		cameraPitch = -89.0f;
+	if (pitch < -89.0f) {
+		pitch = -89.0f;
+	}
+	updateCameraVectors();
+	/*
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	direction.y = sin(glm::radians(pitch));
+	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	cameraFront = glm::normalize(direction);
+	*/
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	float accelerationAmount = 5.0f;
+	float deltaTime = glfwGetTime();
+	glfwSetTime(0);
+
+	if (action == GLFW_PRESS) {
+		if (key == GLFW_KEY_W) {
+			cameraAcceleration.z = -accelerationAmount;
+			cameraVelocity += cameraAcceleration * deltaTime;
+			cameraPosition += cameraVelocity * cameraFront * deltaTime;
+		}
+		if (key == GLFW_KEY_S) {
+			cameraAcceleration.z = accelerationAmount;
+			cameraVelocity += cameraAcceleration * deltaTime;
+			cameraPosition += cameraVelocity * cameraFront * deltaTime;
+		}
+		if (key == GLFW_KEY_A) {
+			cameraAcceleration.x = -accelerationAmount;
+			cameraVelocity += cameraAcceleration * deltaTime;
+			cameraPosition += cameraVelocity * cameraRight * deltaTime;
+		}
+		if (key == GLFW_KEY_D) {
+			cameraAcceleration.x = accelerationAmount;
+			cameraVelocity += cameraAcceleration * deltaTime;
+			cameraPosition += cameraVelocity * cameraRight * deltaTime;
+		}
+		if (key == GLFW_KEY_SPACE) {
+			cameraAcceleration.y = -accelerationAmount;
+			cameraVelocity += cameraAcceleration * deltaTime;
+			cameraPosition += cameraVelocity * cameraUp * deltaTime;
+		}
+		if (key == GLFW_KEY_LEFT_SHIFT) {
+			cameraAcceleration.y = accelerationAmount;
+			cameraVelocity += cameraAcceleration * deltaTime;
+			cameraPosition += cameraVelocity * cameraUp * deltaTime;
+		}
+
+	}
+	else if (action == GLFW_RELEASE) {
+		if (key == GLFW_KEY_W) {
+			cameraAcceleration.z = 0.0f;
+		}
+		if (key == GLFW_KEY_S) {
+			cameraAcceleration.z = 0.0f;
+		}
+
+		if (key == GLFW_KEY_A) {
+			cameraAcceleration.x = 0.0f;
+		}
+		if (key == GLFW_KEY_D) {
+			cameraAcceleration.x = 0.0f;
+		}
+
+		if (key == GLFW_KEY_SPACE) {
+			cameraAcceleration.y = 0.0f;
+		}
+
+		if (key == GLFW_KEY_LEFT_SHIFT) {
+			cameraAcceleration.y = 0.0f;
+		}
 	}
 }
 
-
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
-    initShaders();	
+	initShaders();
 	//************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
 	glClearColor(0, 0, 0, 1);//Ustaw czarny kolor czyszczenia ekranu
 	glEnable(GL_DEPTH_TEST); //Włącz test głębokości pikseli
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
+	glfwSetCursorPosCallback(window, mouse_callback);
+
 }
 
 
 //Zwolnienie zasobów zajętych przez program
 void freeOpenGLProgram(GLFWwindow* window) {
-    freeShaders();
-    //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
+	freeShaders();
+	//************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
 }
 
 
-void drawSpaceship() {
-	// Main body (a long rectangle)
-	glm::mat4 mainBodyModel = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.2f, 0.5f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(mainBodyModel));
-	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
-	mainBody.drawSolid();
+void car2() {
+	glm::mat4 Ms = glm::mat4(1.0f);
+	float wheelAngle = 0.0f;
+	float angle = 0.0f;
+	Ms = glm::rotate(Ms, angle, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	// Left wing (a shorter rectangle)
-	glm::mat4 leftWingModel = glm::translate(glm::mat4(1.0f), glm::vec3(-0.6f, 0.0f, -0.3f));
-	leftWingModel = glm::scale(leftWingModel, glm::vec3(0.4f, 0.15f, 0.4f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(leftWingModel));
-	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
-	leftWing.drawSolid();
+	//Podwozie
+	glm::mat4 Mp = glm::scale(Ms, glm::vec3(1.5f, 0.125f, 1.0f));
+	glUniform4f(spLambert->u("color"), 0, 1, 0, 1);
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mp));  //Załadowanie macierzy modelu do programu cieniującego
+	Models::cube.drawSolid(); //Narysowanie obiektu
 
-	// Right wing (a shorter rectangle)
-	glm::mat4 rightWingModel = glm::translate(glm::mat4(1.0f), glm::vec3(-0.6f, 0.0f, 0.3f));
-	rightWingModel = glm::scale(rightWingModel, glm::vec3(0.4f, 0.15f, 0.4f));
-	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(rightWingModel));
-	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
-	rightWing.drawSolid();
+
+	//Koło1
+	glm::mat4 Mk1 = Ms;
+	Mk1 = glm::translate(Mk1, glm::vec3(1.5f, 0.0f, 1.0f));
+	Mk1 = glm::rotate(Mk1, skret, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mk1 = glm::rotate(Mk1, wheelAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk1));  //Załadowanie macierzy modelu do programu cieniującego
+	carWheel.drawWire();
+
+	//Koło2
+	glm::mat4 Mk2 = Ms;
+	Mk2 = glm::translate(Mk2, glm::vec3(1.5f, 0.0f, -1.0f));
+	Mk2 = glm::rotate(Mk2, skret, glm::vec3(0.0f, 1.0f, 0.0f));
+	Mk2 = glm::rotate(Mk2, wheelAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk2));  //Załadowanie macierzy modelu do programu cieniującego
+	carWheel.drawWire();
+
+	//Koło3
+	glm::mat4 Mk3 = Ms;
+	Mk3 = glm::translate(Mk3, glm::vec3(-1.5f, 0.0f, 1.0f));
+	Mk3 = glm::rotate(Mk3, wheelAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk3));  //Załadowanie macierzy modelu do programu cieniującego
+	carWheel.drawWire();
+
+	//Koło4
+	glm::mat4 Mk4 = Ms;
+	Mk4 = glm::translate(Mk4, glm::vec3(-1.5f, 0.0f, -1.0f));
+	Mk4 = glm::rotate(Mk4, wheelAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(Mk4));  //Załadowanie macierzy modelu do programu cieniującego
+	carWheel.drawWire();
+
+
 }
+
+void drawAxes() {
+	GLfloat axes_vertices[] = {
+		// X-axis
+		cameraPosition.x, cameraPosition.y, cameraPosition.z, 1.0f,
+		cameraPosition.x + cameraRight.x, cameraPosition.y + cameraRight.y, cameraPosition.z + cameraRight.z, 1.0f,
+		// Y-axis
+		cameraPosition.x, cameraPosition.y, cameraPosition.z, 1.0f,
+		cameraPosition.x + cameraUp.x, cameraPosition.y + cameraUp.y, cameraPosition.z + cameraUp.z, 1.0f,
+		// Z-axis
+		cameraPosition.x, cameraPosition.y, cameraPosition.z, 1.0f,
+		cameraPosition.x + cameraFront.x, cameraPosition.y + cameraFront.y, cameraPosition.z + cameraFront.z, 1.0f
+	};
+
+	GLfloat axes_colors[] = {
+		// X-axis
+		1.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f, 1.0f,
+		// Y-axis
+		0.0f, 1.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		// Z-axis
+		0.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f
+	};
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(3);
+
+	glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, axes_vertices);
+	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, axes_colors);
+
+	glDrawArrays(GL_LINES, 0, 6);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(3);
+}
+
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window,float angle) {
+void drawScene(GLFWwindow* window, glm::mat4 V) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyszczenie bufora kolorów i bufora głębokości
-	
-	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f); //Wyliczenie macierzy rzutowania
 
-	// Update view matrix
-	glm::vec3 front;
-	front.x = cos(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
-	front.y = sin(glm::radians(cameraPitch));
-	front.z = sin(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
-	glm::vec3 cameraFront = glm::normalize(front);
-	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::mat4 V = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f); //Wyliczenie macierzy rzutowania
+	//glm::mat4 V = glm::lookAt(glm::vec3(0.0f, 0.0f, -7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Wyliczenie macierzy widoku
+	//glm::mat4 V = glm::lookAt(cameraPosition, cameraSum, cameraUp);
 
 	spLambert->use();//Aktywacja programu cieniującego
 	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P)); //Załadowanie macierzy rzutowania do programu cieniującego
-	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V));
+	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V)); //Załadowanie macierzy widoku do programu cieniującego
 
-	
 
-	drawSpaceship();
+	//planets1(angle);
+	//planets2(angle);
+	//cogs1(angle);
+	//cogs2(angle);
+	//cogs3(angle);
+	//car1(angle);
+	car2();
+	drawAxes();
 
 	//Skopiowanie bufora ukrytego do widocznego. Z reguły ostatnie polecenie w procedurze drawScene.
 	glfwSwapBuffers(window);
 }
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
 
-float cameraSpeed = 5.0f;
+
 
 int main(void)
 {
@@ -181,7 +330,7 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+	window = glfwCreateWindow(1000, 1000, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{
@@ -200,34 +349,24 @@ int main(void)
 
 	initOpenGLProgram(window); //Operacje inicjujące
 
+	glfwSetTime(0); //Wyzeruj timer
 
-	float angle = 0; //Aktualny kąt obrotu obiektu
+
+	//Główna pętla
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
-		angle += speed * glfwGetTime(); //Oblicz przyrost kąta po obrocie
-		deltaTime = glfwGetTime();
+		float deltaTime = glfwGetTime();
+
+		
+		cameraVelocity *= 0.99f;
 
 
-		// Calculate deltaTime
-		float currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+		// Update the view matrix
+		glm::mat4 V = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 
-		// Update camera velocity and position
-		cameraVelocity += cameraAcceleration * deltaTime;
-		cameraPosition += cameraVelocity * deltaTime;
-
-		// Dampen the camera velocity (simulate drag)
-		cameraVelocity *= 0.95f;
-
-
-		drawScene(window,angle); //Wykonaj procedurę rysującą
-
-		// Set mouse and key callbacks
-		glfwSetCursorPosCallback(window, mouse_callback);
-		glfwSetKeyCallback(window, key_callback);
-
-		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
+		// Clear buffers and set the view and projection matrices
+		drawScene(window, V);
+		glfwPollEvents();
 	}
 
 	freeOpenGLProgram(window);
