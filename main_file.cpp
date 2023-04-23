@@ -32,6 +32,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "shaderprogram.h"
 
 
+float aspectRatio = 1.0f;
+
 float speed = 0; //Prędkość kątowa obrotu obiektu
 float skret = 0; //skret kół
 float deltaTime = 0;
@@ -42,7 +44,9 @@ Models::Sphere moon1(0.1, 36, 36);
 Models::Sphere planet2(0.25, 36, 36);
 Models::Sphere moon2(0.07, 36, 36);
 Models::Torus carWheel(0.3, 0.1, 36, 36);
-
+Models::Cube mainBody;
+Models::Cube rightWing;
+Models::Cube leftWing;
 
 
 // Camera variables
@@ -70,6 +74,18 @@ float yaw = -90.0f; // Yaw is initially set so that the camera is facing along t
 float pitch = 0.0f;
 glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 cameraRight;
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+	// Update the viewport
+	glViewport(0, 0, width, height);
+
+	// Update the aspect ratio for the projection matrix
+	aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+
+	// Recalculate the projection matrix with the new aspect ratio
+	glm::mat4 projection = glm::perspective(glm::radians(50.0f), aspectRatio, 1.0f, 50.0f);
+}
+
 
 
 
@@ -235,12 +251,49 @@ void car2() {
 }
 
 
+void drawSpaceship() {
+	glm::vec3 spaceshipOffset = glm::vec3(0.0f, -2.0f, -1.0f); // Adjust this offset as needed
+
+
+	glm::mat4 spaceshipModel = glm::translate(glm::mat4(1.0f), cameraPosition + spaceshipOffset);
+
+	// Apply the camera's orientation to the spaceship model
+	glm::vec3 right = glm::normalize(glm::cross(cameraFront, cameraUp));
+	glm::mat4 rotationMatrix = glm::mat4(glm::vec4(right, 0.0f), glm::vec4(cameraUp, 0.0f), glm::vec4(cameraFront, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	spaceshipModel = spaceshipModel * rotationMatrix;
+
+
+	float angle = glm::radians(-90.0f);
+	spaceshipModel = glm::rotate(spaceshipModel, angle, glm::vec3(0.0f, 1.0f, 0.0f));
+	spaceshipModel = glm::scale(spaceshipModel, glm::vec3(0.5f, 0.5f, 0.5f));
+	// Main body (a long rectangle)
+	glm::mat4 mainBodyModel = glm::scale(spaceshipModel, glm::vec3(1.0f, 0.2f, 0.5f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(mainBodyModel));
+	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
+	mainBody.drawSolid();
+
+	// Left wing (a shorter rectangle)
+	glm::mat4 leftWingModel = glm::translate(spaceshipModel, glm::vec3(-0.6f, 0.0f, -0.3f));
+	leftWingModel = glm::scale(leftWingModel, glm::vec3(0.4f, 0.15f, 0.4f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(leftWingModel));
+	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
+	leftWing.drawSolid();
+
+	// Right wing (a shorter rectangle)
+	glm::mat4 rightWingModel = glm::translate(spaceshipModel, glm::vec3(-0.6f, 0.0f, 0.3f));
+	rightWingModel = glm::scale(rightWingModel, glm::vec3(0.4f, 0.15f, 0.4f));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(rightWingModel));
+	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
+	rightWing.drawSolid();
+}
+
+
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window, glm::mat4 V) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyszczenie bufora kolorów i bufora głębokości
 
-	glm::mat4 P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f); //Wyliczenie macierzy rzutowania
+	glm::mat4 P = glm::perspective(glm::radians(50.0f), aspectRatio, 1.0f, 50.0f); //Wyliczenie macierzy rzutowania
 	//glm::mat4 V = glm::lookAt(glm::vec3(0.0f, 0.0f, -7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Wyliczenie macierzy widoku
 	//glm::mat4 V = glm::lookAt(cameraPosition, cameraSum, cameraUp);
 
@@ -256,6 +309,8 @@ void drawScene(GLFWwindow* window, glm::mat4 V) {
 	//cogs3(angle);
 	//car1(angle);
 	car2();
+
+	drawSpaceship();
 
 	//Skopiowanie bufora ukrytego do widocznego. Z reguły ostatnie polecenie w procedurze drawScene.
 	glfwSwapBuffers(window);
@@ -275,6 +330,7 @@ int main(void)
 	}
 
 	window = glfwCreateWindow(1000, 1000, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{
@@ -294,7 +350,7 @@ int main(void)
 	initOpenGLProgram(window); //Operacje inicjujące
 
 	glfwSetTime(0); //Wyzeruj timer
-
+	int width, height;
 	//Główna pętla
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
