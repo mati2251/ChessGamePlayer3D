@@ -1,14 +1,13 @@
 ﻿  main_file.cpp
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(38,35): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(39,33): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(41,34): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(42,40): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(92,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(93,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(97,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(98,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(99,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(100,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(128,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(358,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(40,35): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(41,33): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(43,34): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(44,40): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(95,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(96,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(100,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(101,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(102,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(103,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(301,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   bio_szkielet_05_win.vcxproj -> D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\x64\Debug\bio_szkielet_05_win.exe

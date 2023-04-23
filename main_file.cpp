@@ -34,6 +34,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 float speed = 0; //Prędkość kątowa obrotu obiektu
 float skret = 0; //skret kół
+float deltaTime = 0;
+float lastFrame = 0.0f;
 Models::Sphere sun(0.5, 36, 36);
 Models::Sphere planet1(0.2, 36, 36);
 Models::Sphere moon1(0.1, 36, 36);
@@ -59,7 +61,7 @@ void error_callback(int error, const char* description) {
 //Procedura obsługi klawiatury
 glm::vec3 cameraVelocity(0.0f);
 glm::vec3 cameraAcceleration(0.0f, 0.0f, 0.0f);
-
+float accelerationAmount = 5.0f;
 
 
 
@@ -68,6 +70,7 @@ float yaw = -90.0f; // Yaw is initially set so that the camera is facing along t
 float pitch = 0.0f;
 glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 cameraRight;
+
 
 
 void updateCameraVectors() {
@@ -113,6 +116,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	if (pitch < -89.0f) {
 		pitch = -89.0f;
 	}
+
 	updateCameraVectors();
 	/*
 	glm::vec3 direction;
@@ -124,67 +128,45 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	float accelerationAmount = 5.0f;
-	float deltaTime = glfwGetTime();
-	glfwSetTime(0);
 
 	if (action == GLFW_PRESS) {
-		if (key == GLFW_KEY_W) {
-			cameraAcceleration.z = -accelerationAmount;
-			cameraVelocity += cameraAcceleration * deltaTime;
-			cameraPosition += cameraVelocity * cameraFront * deltaTime;
-		}
-		if (key == GLFW_KEY_S) {
-			cameraAcceleration.z = accelerationAmount;
-			cameraVelocity += cameraAcceleration * deltaTime;
-			cameraPosition += cameraVelocity * cameraFront * deltaTime;
-		}
-		if (key == GLFW_KEY_A) {
-			cameraAcceleration.x = -accelerationAmount;
-			cameraVelocity += cameraAcceleration * deltaTime;
-			cameraPosition += cameraVelocity * cameraRight * deltaTime;
-		}
-		if (key == GLFW_KEY_D) {
-			cameraAcceleration.x = accelerationAmount;
-			cameraVelocity += cameraAcceleration * deltaTime;
-			cameraPosition += cameraVelocity * cameraRight * deltaTime;
-		}
-		if (key == GLFW_KEY_SPACE) {
-			cameraAcceleration.y = -accelerationAmount;
-			cameraVelocity += cameraAcceleration * deltaTime;
-			cameraPosition += cameraVelocity * cameraUp * deltaTime;
-		}
 		if (key == GLFW_KEY_LEFT_SHIFT) {
-			cameraAcceleration.y = accelerationAmount;
-			cameraVelocity += cameraAcceleration * deltaTime;
-			cameraPosition += cameraVelocity * cameraUp * deltaTime;
+			accelerationAmount = 20.0f;
 		}
-
 	}
 	else if (action == GLFW_RELEASE) {
-		if (key == GLFW_KEY_W) {
-			cameraAcceleration.z = 0.0f;
-		}
-		if (key == GLFW_KEY_S) {
-			cameraAcceleration.z = 0.0f;
-		}
-
-		if (key == GLFW_KEY_A) {
-			cameraAcceleration.x = 0.0f;
-		}
-		if (key == GLFW_KEY_D) {
-			cameraAcceleration.x = 0.0f;
-		}
-
-		if (key == GLFW_KEY_SPACE) {
-			cameraAcceleration.y = 0.0f;
-		}
-
 		if (key == GLFW_KEY_LEFT_SHIFT) {
-			cameraAcceleration.y = 0.0f;
+			accelerationAmount = 5.0f;
 		}
 	}
 }
+
+void processInput(GLFWwindow* window) {
+	
+	glm::vec3 inputAcceleration(0.0f, 0.0f, 0.0f);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		inputAcceleration += accelerationAmount * cameraFront;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		inputAcceleration += -accelerationAmount * cameraFront;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		inputAcceleration += -accelerationAmount * cameraRight;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		inputAcceleration += accelerationAmount * cameraRight;
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+		inputAcceleration += accelerationAmount * cameraUp;
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+		inputAcceleration += -accelerationAmount * cameraUp;
+	}
+
+	cameraAcceleration = inputAcceleration;
+}
+
 
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
@@ -252,43 +234,6 @@ void car2() {
 
 }
 
-void drawAxes() {
-	GLfloat axes_vertices[] = {
-		// X-axis
-		cameraPosition.x, cameraPosition.y, cameraPosition.z, 1.0f,
-		cameraPosition.x + cameraRight.x, cameraPosition.y + cameraRight.y, cameraPosition.z + cameraRight.z, 1.0f,
-		// Y-axis
-		cameraPosition.x, cameraPosition.y, cameraPosition.z, 1.0f,
-		cameraPosition.x + cameraUp.x, cameraPosition.y + cameraUp.y, cameraPosition.z + cameraUp.z, 1.0f,
-		// Z-axis
-		cameraPosition.x, cameraPosition.y, cameraPosition.z, 1.0f,
-		cameraPosition.x + cameraFront.x, cameraPosition.y + cameraFront.y, cameraPosition.z + cameraFront.z, 1.0f
-	};
-
-	GLfloat axes_colors[] = {
-		// X-axis
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		// Y-axis
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		// Z-axis
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f
-	};
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(3);
-
-	glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, axes_vertices);
-	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, axes_colors);
-
-	glDrawArrays(GL_LINES, 0, 6);
-
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(3);
-}
-
 
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window, glm::mat4 V) {
@@ -311,7 +256,6 @@ void drawScene(GLFWwindow* window, glm::mat4 V) {
 	//cogs3(angle);
 	//car1(angle);
 	car2();
-	drawAxes();
 
 	//Skopiowanie bufora ukrytego do widocznego. Z reguły ostatnie polecenie w procedurze drawScene.
 	glfwSwapBuffers(window);
@@ -351,14 +295,21 @@ int main(void)
 
 	glfwSetTime(0); //Wyzeruj timer
 
-
 	//Główna pętla
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
-		float deltaTime = glfwGetTime();
+		float currentFrame = glfwGetTime();
+		float deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 
-		
-		cameraVelocity *= 0.99f;
+		processInput(window);
+
+		// Update the camera velocity and position
+		cameraVelocity += cameraAcceleration * deltaTime;
+		cameraVelocity *= 0.99f; // Apply friction
+		cameraPosition += cameraVelocity * deltaTime;
+
+
 
 
 		// Update the view matrix
