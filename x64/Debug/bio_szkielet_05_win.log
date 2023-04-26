@@ -1,15 +1,2 @@
-﻿  main_file.cpp
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(42,35): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(43,33): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(45,34): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(46,40): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(111,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(112,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(116,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(117,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(118,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(119,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(357,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(353,13): warning C4101: 'height': unreferenced local variable
-D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\main_file.cpp(353,6): warning C4101: 'width': unreferenced local variable
+﻿  camera.cpp
   bio_szkielet_05_win.vcxproj -> D:\PP\4semestr\grafikaKomputerowaIWizualizajca\Asteroids3D\x64\Debug\bio_szkielet_05_win.exe

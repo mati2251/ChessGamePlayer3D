@@ -31,76 +31,18 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "lodepng.h"
 #include "shaderprogram.h"
 
-
-float aspectRatio = 1.0f;
-
-float speed = 0; //Prędkość kątowa obrotu obiektu
-float skret = 0; //skret kół
-float deltaTime = 0;
-float lastFrame = 0.0f;
-Models::Sphere sun(0.5, 36, 36);
-Models::Sphere planet1(0.2, 36, 36);
-Models::Sphere moon1(0.1, 36, 36);
-Models::Sphere planet2(0.25, 36, 36);
-Models::Sphere moon2(0.07, 36, 36);
-Models::Torus carWheel(0.3, 0.1, 36, 36);
-Models::Cube mainBody;
-Models::Cube rightWing;
-Models::Cube leftWing;
+#include "camera.h"
 
 
-// Camera variables
-glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), -90.0f, 0.0f);
 
 
-float cameraSpeed = 0.0f;
-
-//Procedura obsługi błędów
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
 
-//Procedura obsługi klawiatury
-glm::vec3 cameraVelocity(0.0f);
-glm::vec3 cameraAcceleration(0.0f, 0.0f, 0.0f);
-float accelerationAmount = 5.0f;
 
-
-
-
-float yaw = -90.0f; // Yaw is initially set so that the camera is facing along the positive Z-axis
-float pitch = 0.0f;
-glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 cameraRight;
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-	// Update the viewport
-	glViewport(0, 0, width, height);
-
-	// Update the aspect ratio for the projection matrix
-	aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-
-	// Recalculate the projection matrix with the new aspect ratio
-	glm::mat4 projection = glm::perspective(glm::radians(50.0f), aspectRatio, 1.0f, 50.0f);
-}
-
-
-
-
-void updateCameraVectors() {
-	// Calculate the new cameraFront vector
-	glm::vec3 front;
-	front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	front.y = sin(glm::radians(pitch));
-	front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	cameraFront = glm::normalize(front);
-
-	// Update the cameraRight and cameraUp vectors
-	cameraRight = glm::normalize(glm::cross(cameraFront, worldUp));
-	cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
-}
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	static float lastX = 0.0f;
@@ -118,96 +60,47 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	lastX = xpos;
 	lastY = ypos;
 
-	float sensitivity = 0.05f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	// Limit the pitch to avoid gimbal lock
-	if (pitch > 89.0f) {
-		pitch = 89.0f;
-	}
-	if (pitch < -89.0f) {
-		pitch = -89.0f;
-	}
-
-	updateCameraVectors();
-	/*
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
-	*/
+	camera.processMouseMovement(xoffset, yoffset);
 }
+
+
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
 	if (action == GLFW_PRESS) {
 		if (key == GLFW_KEY_LEFT_SHIFT) {
-			accelerationAmount = 20.0f;
+			camera.setCameraAcceleration(20.0f);
 		}
 	}
 	else if (action == GLFW_RELEASE) {
 		if (key == GLFW_KEY_LEFT_SHIFT) {
-			accelerationAmount = 5.0f;
+			camera.setCameraAcceleration(5.0f);
 		}
 	}
 }
 
-void processInput(GLFWwindow* window) {
-	
-	glm::vec3 inputAcceleration(0.0f, 0.0f, 0.0f);
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		inputAcceleration += accelerationAmount * cameraFront;
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		inputAcceleration += -accelerationAmount * cameraFront;
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		inputAcceleration += -accelerationAmount * cameraRight;
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		inputAcceleration += accelerationAmount * cameraRight;
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-		inputAcceleration += accelerationAmount * cameraUp;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-		inputAcceleration += -accelerationAmount * cameraUp;
-	}
-
-	cameraAcceleration = inputAcceleration;
-}
-
-
-//Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
 	initShaders();
-	//************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
-	glClearColor(0, 0, 0, 1);//Ustaw czarny kolor czyszczenia ekranu
-	glEnable(GL_DEPTH_TEST); //Włącz test głębokości pikseli
+	glClearColor(0, 0, 0, 1);
+	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
+	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
-
 }
 
 
-//Zwolnienie zasobów zajętych przez program
 void freeOpenGLProgram(GLFWwindow* window) {
 	freeShaders();
-	//************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
 }
 
 
 void car2() {
+	Models::Torus carWheel;
 	glm::mat4 Ms = glm::mat4(1.0f);
 	float wheelAngle = 0.0f;
 	float angle = 0.0f;
+	float skret = 0.0f;
 	Ms = glm::rotate(Ms, angle, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	//Podwozie
@@ -252,70 +145,67 @@ void car2() {
 
 
 void drawSpaceship() {
-	glm::vec3 spaceshipOffset = glm::vec3(0.0f, -2.0f, -1.0f); // Adjust this offset as needed
+	Models::Cube mainBody;
+	Models::Cube rightWing;
+	Models::Cube leftWing;
 
+	glm::vec3 spaceshipOffset = glm::vec3(0.0f, -2.0f, -1.0f);
+	glm::mat4 spaceshipModel = glm::translate(glm::mat4(1.0f), camera.getCameraPosition() + spaceshipOffset);
 
-	glm::mat4 spaceshipModel = glm::translate(glm::mat4(1.0f), cameraPosition + spaceshipOffset);
-
-	// Apply the camera's orientation to the spaceship model
-	glm::vec3 right = glm::normalize(glm::cross(cameraFront, cameraUp));
-	glm::mat4 rotationMatrix = glm::mat4(glm::vec4(right, 0.0f), glm::vec4(cameraUp, 0.0f), glm::vec4(cameraFront, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	glm::vec3 right = glm::normalize(glm::cross(camera.getCameraFront(), camera.getCameraUp()));
+	glm::mat4 rotationMatrix = glm::mat4(glm::vec4(right, 0.0f), glm::vec4(camera.getCameraUp(), 0.0f), glm::vec4(camera.getCameraFront(), 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	spaceshipModel = spaceshipModel * rotationMatrix;
 
 
-	float angle = glm::radians(-90.0f);
-	spaceshipModel = glm::rotate(spaceshipModel, angle, glm::vec3(0.0f, 1.0f, 0.0f));
+	spaceshipModel = glm::rotate(spaceshipModel, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	spaceshipModel = glm::scale(spaceshipModel, glm::vec3(0.5f, 0.5f, 0.5f));
-	// Main body (a long rectangle)
+	
 	glm::mat4 mainBodyModel = glm::scale(spaceshipModel, glm::vec3(1.0f, 0.2f, 0.5f));
 	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(mainBodyModel));
-	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
+	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f);
 	mainBody.drawSolid();
 
-	// Left wing (a shorter rectangle)
+	
 	glm::mat4 leftWingModel = glm::translate(spaceshipModel, glm::vec3(-0.6f, 0.0f, -0.3f));
 	leftWingModel = glm::scale(leftWingModel, glm::vec3(0.4f, 0.15f, 0.4f));
 	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(leftWingModel));
-	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
+	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); 
 	leftWing.drawSolid();
 
-	// Right wing (a shorter rectangle)
 	glm::mat4 rightWingModel = glm::translate(spaceshipModel, glm::vec3(-0.6f, 0.0f, 0.3f));
 	rightWingModel = glm::scale(rightWingModel, glm::vec3(0.4f, 0.15f, 0.4f));
 	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(rightWingModel));
-	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f); // Set spaceship color
+	glUniform4f(spLambert->u("color"), 0.5f, 0.5f, 0.5f, 1.0f);
 	rightWing.drawSolid();
 }
 
+float aspectRatio = 1.0f;
 
-//Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window, glm::mat4 V) {
-	//************Tutaj umieszczaj kod rysujący obraz******************l
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wyczyszczenie bufora kolorów i bufora głębokości
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+	glViewport(0, 0, width, height);
 
-	glm::mat4 P = glm::perspective(glm::radians(50.0f), aspectRatio, 1.0f, 50.0f); //Wyliczenie macierzy rzutowania
-	//glm::mat4 V = glm::lookAt(glm::vec3(0.0f, 0.0f, -7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Wyliczenie macierzy widoku
-	//glm::mat4 V = glm::lookAt(cameraPosition, cameraSum, cameraUp);
+	aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 
-	spLambert->use();//Aktywacja programu cieniującego
-	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P)); //Załadowanie macierzy rzutowania do programu cieniującego
-	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V)); //Załadowanie macierzy widoku do programu cieniującego
+	glm::mat4 projection = glm::perspective(glm::radians(50.0f), aspectRatio, 1.0f, 50.0f);
+}
+
+void drawScene(GLFWwindow* window) {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+
+	glm::mat4 P = glm::perspective(glm::radians(50.0f), aspectRatio, 1.0f, 50.0f);
+	glm::mat4 V = camera.getViewMatrix();
+
+	spLambert->use();
+	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P)); 
+	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V)); 
 
 
-	//planets1(angle);
-	//planets2(angle);
-	//cogs1(angle);
-	//cogs2(angle);
-	//cogs3(angle);
-	//car1(angle);
 	car2();
 
 	drawSpaceship();
 
-	//Skopiowanie bufora ukrytego do widocznego. Z reguły ostatnie polecenie w procedurze drawScene.
 	glfwSwapBuffers(window);
 }
-
 
 
 int main(void)
@@ -349,8 +239,9 @@ int main(void)
 
 	initOpenGLProgram(window); //Operacje inicjujące
 
-	glfwSetTime(0); //Wyzeruj timer
-	int width, height;
+	glfwSetTime(0); 
+	float deltaTime = 0.0f;
+	float lastFrame = 0.0f;
 	//Główna pętla
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
@@ -358,21 +249,12 @@ int main(void)
 		float deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		processInput(window);
+		camera.processKeyboardInput(window, deltaTime);
 
-		// Update the camera velocity and position
-		cameraVelocity += cameraAcceleration * deltaTime;
-		cameraVelocity *= 0.99f; // Apply friction
-		cameraPosition += cameraVelocity * deltaTime;
-
-
-
-
-		// Update the view matrix
-		glm::mat4 V = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+		
 
 		// Clear buffers and set the view and projection matrices
-		drawScene(window, V);
+		drawScene(window);
 		glfwPollEvents();
 	}
 
