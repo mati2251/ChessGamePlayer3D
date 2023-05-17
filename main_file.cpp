@@ -21,7 +21,6 @@ void freeOpenGLProgram(GLFWwindow *window) {
 void drawScene(GLFWwindow *window) {
 }
 
-
 int main(void) {
     GLFWwindow *window;
 
