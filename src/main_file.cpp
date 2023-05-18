@@ -2,23 +2,47 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
+#include "../include/glm/glm.hpp"
+#include "../include/glm/gtc/type_ptr.hpp"
+#include "../include/glm/gtc/matrix_transform.hpp"
+#include "shaderprogram/shaderprogram.h"
+#include "constants.h"
+
+float aspectRatio = 1;
+ShaderProgram *sp;
 
 void error_callback(int error, const char *description) {
     fputs(description, stderr);
 }
 
+void windowResizeCallback(GLFWwindow *window, int width, int height) {
+    if (height == 0) return;
+    aspectRatio = (float) width / (float) height;
+    glViewport(0, 0, width, height);
+}
+
 void initOpenGLProgram(GLFWwindow *window) {
+    glClearColor(0, 0, 1, 1);
+    glEnable(GL_DEPTH_TEST);
+    glfwSetWindowSizeCallback(window, windowResizeCallback);
+    sp = new ShaderProgram("src/shaders/v_lambert.glsl", NULL, "src/shaders/f_lambert.glsl");
 }
 
 void freeOpenGLProgram(GLFWwindow *window) {
+    delete sp;
 }
 
 void drawScene(GLFWwindow *window) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glm::mat4 V = glm::lookAt(
+            glm::vec3(0, 0, -2.5),
+            glm::vec3(0, 0, 0),
+            glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 P = glm::perspective(50.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
+    glm::mat4 M = glm::mat4(1.0f);
 }
 
 int main(void) {
