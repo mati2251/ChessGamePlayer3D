@@ -1,0 +1,5 @@
+.vs
+.idea
+x64
+main_file
+cmake-build-debug
