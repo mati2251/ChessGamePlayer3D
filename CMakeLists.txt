@@ -13,8 +13,7 @@ include_directories(${GLEW_INCLUDE_DIRS})
 
 set(SOURCES
         src/main_file.cpp
-        src/shaderprogram/shaderprogram.cpp
-        src/spacegenerator/spacegenerator.cpp src/spacegenerator/spacegenerator.h src/spacegenerator/stargenerator/stargenerator.cpp src/spacegenerator/stargenerator/stargenerator.h)
+        src/shaderprogram/shaderprogram.cpp)
 
 add_executable(main_file ${SOURCES})
 
