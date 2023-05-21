@@ -9,6 +9,7 @@
 #include "../include/glm/gtc/matrix_transform.hpp"
 #include "shaderprogram/shaderprogram.h"
 #include "constants.h"
+#include "cube/cube.h"
 
 float aspectRatio = 1;
 ShaderProgram *sp;
@@ -48,8 +49,9 @@ void drawScene(GLFWwindow *window) {
     sp->use();
     glUniformMatrix4fv(sp->u("P"), 1, false, glm::value_ptr(P));
     glUniformMatrix4fv(sp->u("V"), 1, false, glm::value_ptr(V));
-    glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(V));
-
+    glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(M));
+    Cube cube(sp);
+    cube.draw();
     glfwSwapBuffers(window);
 }
 

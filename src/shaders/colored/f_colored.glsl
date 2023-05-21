@@ -8,6 +8,5 @@ uniform vec3 center;
 uniform float radius;
 
 void main() {
-    float normalizedCoord = normalize(gl_FragCoord).x;
-    pixelColor = fragmentColor;
+    pixelColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
