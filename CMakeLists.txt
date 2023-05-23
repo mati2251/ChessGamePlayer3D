@@ -13,7 +13,12 @@ include_directories(${GLEW_INCLUDE_DIRS})
 
 set(SOURCES
         src/main_file.cpp
-        src/shaderprogram/shaderprogram.cpp src/camera/Camera.cpp src/cube/cube.cpp)
+        src/shaderprogram/shaderprogram.cpp
+        src/chessboard/chessboard.cpp
+        src/colored_model/colored_model.cpp
+        src/shaders_container/shaders_container.cpp
+        src/program_state/program_state.cpp
+        )
 
 add_executable(main_file ${SOURCES})
 
