@@ -18,7 +18,7 @@ set(SOURCES
         src/colored_model/colored_model.cpp
         src/shaders_container/shaders_container.cpp
         src/program_state/program_state.cpp
-        )
+        src/vec4_to_array/vec4_to_array.cpp src/vec4_to_array/vec4_to_array.h)
 
 add_executable(main_file ${SOURCES})
 

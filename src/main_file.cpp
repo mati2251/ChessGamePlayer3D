@@ -22,7 +22,7 @@ void windowResizeCallback(GLFWwindow *window, int width, int height) {
 }
 
 void initOpenGLProgram(GLFWwindow *window) {
-    glClearColor(0, 0, 0, 1);
+    glClearColor(0.7, 0.7, 0.7, 1);
     glEnable(GL_DEPTH_TEST);
     glfwSetWindowSizeCallback(window, windowResizeCallback);
 }
@@ -34,6 +34,8 @@ void drawScene(GLFWwindow *window) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Chessboard chessboard;
     glm::mat4 M = glm::mat4(1.0f);
+    M = glm::scale(M, glm::vec3(0.5f, 0.5f, 0.5f));
+    M = glm::rotate(M, 3 * ((float) M_PI / 4), glm::vec3(0.0f, 1.0f, 0.0f));
     chessboard.draw(M);
     glfwSwapBuffers(window);
 }

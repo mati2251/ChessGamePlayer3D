@@ -10,11 +10,10 @@ public:
     ShaderProgram *shader;
     float *colors;
     float *vertices;
-    float *normals;
     int vertexCount;
     GLenum mode;
 
-    ColoredModel(ShadersContainer *container, float *vertices, float *colors, float *normals, int vertexCount,
+    ColoredModel(ShadersContainer *container, float *vertices, float *colors, int vertexCount,
                  GLenum mode);
 
     void draw(glm::mat4 M);
