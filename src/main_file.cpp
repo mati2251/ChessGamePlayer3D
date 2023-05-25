@@ -6,13 +6,18 @@
 #include <cstdio>
 #include "../include/glm/glm.hpp"
 #include "../include/glm/gtc/type_ptr.hpp"
-#include "shaderprogram/shaderprogram.h"
 #include "chessboard/chessboard.h"
+#include "rotate_controller/rotate_controller.h"
 
 float aspectRatio = 1;
+ProgramState *programState;
 
 void error_callback(int error, const char *description) {
     fputs(description, stderr);
+}
+
+void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    programState->rotateController->keyCallback(window, key, scancode, action, mods);
 }
 
 void windowResizeCallback(GLFWwindow *window, int width, int height) {
@@ -25,6 +30,8 @@ void initOpenGLProgram(GLFWwindow *window) {
     glClearColor(0.7, 0.7, 0.7, 1);
     glEnable(GL_DEPTH_TEST);
     glfwSetWindowSizeCallback(window, windowResizeCallback);
+    programState = ProgramState::getInstance();
+    glfwSetKeyCallback(window, keyCallback);
 }
 
 void freeOpenGLProgram(GLFWwindow *window) {
@@ -33,10 +40,8 @@ void freeOpenGLProgram(GLFWwindow *window) {
 void drawScene(GLFWwindow *window) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Chessboard chessboard;
-    glm::mat4 M = glm::mat4(1.0f);
-    M = glm::scale(M, glm::vec3(0.5f, 0.5f, 0.5f));
-    M = glm::rotate(M, 3 * ((float) M_PI / 4), glm::vec3(0.0f, 1.0f, 0.0f));
-    chessboard.draw(M);
+    programState->rotateController->rotateM();
+    chessboard.draw(programState->M);
     glfwSwapBuffers(window);
 }
 
@@ -68,7 +73,7 @@ int main(void) {
     }
 
     initOpenGLProgram(window);
-
+    glfwSetTime(0);
     while (!glfwWindowShouldClose(window)) {
         drawScene(window);
         glfwPollEvents();
