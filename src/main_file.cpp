@@ -7,7 +7,6 @@
 #include "../include/glm/glm.hpp"
 #include "../include/glm/gtc/type_ptr.hpp"
 #include "chessboard/chessboard.h"
-#include "rotate_controller/rotate_controller.h"
 
 float aspectRatio = 1;
 ProgramState *programState;

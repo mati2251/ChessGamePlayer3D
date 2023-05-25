@@ -18,8 +18,10 @@ class Chessboard: Model {
     void addRowToDraw(float y, bool startFromBlack = false);
     void addChessboardToDraw();
     void addCaseToDraw();
+    void copyMandTransform(glm::mat4 M);
 public:
     Chessboard();
+    glm::mat4 obj;
     void draw(glm::mat4 M) override;
 };
 

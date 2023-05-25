@@ -1,8 +1,8 @@
 #include "chessboard.h"
 
 void Chessboard::draw(glm::mat4 M) {
-    this->coloredModel->draw(M);
-
+    this->copyMandTransform(M);
+    this->coloredModel->draw(obj);
 }
 
 Chessboard::Chessboard() {
@@ -11,7 +11,6 @@ Chessboard::Chessboard() {
     this->addCaseToDraw();
     this->coloredModel = new ColoredModel(container, this->vertices.data(), this->colors.data(), this->vertexCount,
                                           GL_TRIANGLES);
-
 }
 
 void Chessboard::addSquareToDraw(glm::vec4 p1, glm::vec4 p2, glm::vec4 p3, glm::vec4 p4, glm::vec4 color) {
@@ -75,4 +74,8 @@ void Chessboard::addCaseToDraw() {
     this->addSquareToDraw(chessboardLim3, chessboardLim2, caseLim3, caseLim2, color);
     this->addSquareToDraw(caseLim2, caseLim3, bottomCaseLim2, bottomCaseLim3, color);
     this->addSquareToDraw(bottomCaseLim1, bottomCaseLim2, bottomCaseLim4, bottomCaseLim3, color);
+}
+
+void Chessboard::copyMandTransform(glm::mat4 M) {
+    this->obj = M;
 }
