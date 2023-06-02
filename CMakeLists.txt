@@ -11,6 +11,7 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 include_directories(${GLFW_INCLUDE_DIRS})
 include_directories(${GLEW_INCLUDE_DIRS})
 
+
 set(SOURCES
         src/main_file.cpp
         src/shaderprogram/shaderprogram.cpp
@@ -19,7 +20,7 @@ set(SOURCES
         src/shaders_container/shaders_container.cpp
         src/program_state/program_state.cpp
         src/vec4_to_array/vec4_to_array.cpp
-        src/rotate_controller/rotate_controller.cpp)
+        src/rotate_controller/rotate_controller.cpp src/obj_reader/obj_reader.cpp src/obj_reader/obj_reader.h)
 
 add_executable(main_file ${SOURCES})
 
@@ -27,4 +28,5 @@ target_link_libraries(main_file
         ${OPENGL_LIBRARIES}
         glfw
         ${GLEW_LIBRARIES}
+        assimp
         )

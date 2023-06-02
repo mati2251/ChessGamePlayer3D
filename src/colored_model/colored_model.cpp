@@ -1,6 +1,7 @@
 #include "colored_model.h"
 
 void ColoredModel::draw(glm::mat4 M) {
+    this->shader->use();
     glUniformMatrix4fv(this->shader->u("M"), 1, false, glm::value_ptr(M));
     glEnableVertexAttribArray(this->shader->a("vertex"));
     glVertexAttribPointer(this->shader->a("vertex"), 4, GL_FLOAT, false, 0, this->vertices);
