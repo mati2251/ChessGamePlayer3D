@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <cstdio>
-#include <string>
 #include "../include/glm/glm.hpp"
 #include "../include/glm/gtc/type_ptr.hpp"
 #include "chessboard/chessboard.h"
@@ -33,7 +32,7 @@ void initOpenGLProgram(GLFWwindow *window) {
     glEnable(GL_DEPTH_TEST);
     glfwSetWindowSizeCallback(window, windowResizeCallback);
     programState = ProgramState::getInstance();
-    objReader = new ObjReader("../resources/pawn.obj");
+    objReader = new ObjReader("../resources/pawn.obj", "../resources/wood_black.png");
     glfwSetKeyCallback(window, keyCallback);
 }
 
@@ -60,7 +59,7 @@ int main(void) {
         exit(EXIT_FAILURE);
     }
 
-    window = glfwCreateWindow(1000, 1000, "Asteroid3D", NULL,
+    window = glfwCreateWindow(1000, 1000, "Chess", NULL,
                               NULL);
 
     if (!window) {

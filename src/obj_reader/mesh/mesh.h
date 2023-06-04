@@ -3,17 +3,17 @@
 
 
 #include <vector>
-#include "structurs/texture.h"
 #include "structurs/vertex.h"
 #include "shaderprogram/shaderprogram.h"
+#include "texture/texture.h"
 
 class Mesh {
 public:
     std::vector<Vertex> vertices;
-    Texture texture;
+    Texture *texture;
     std::vector<unsigned int> indices;
 
-    Mesh(std::vector <Vertex> vertices,Texture texture, std::vector<unsigned int> indices);
+    Mesh(std::vector<Vertex> vertices, Texture *texture, std::vector<unsigned int> indices);
 
     void draw();
 

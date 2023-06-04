@@ -1,8 +1,9 @@
 #include "mesh.h"
+#include "program_state/program_state.h"
 
 #include <utility>
 
-Mesh::Mesh(std::vector<Vertex> vertices, Texture texture, std::vector<unsigned int> indices) {
+Mesh::Mesh(std::vector<Vertex> vertices, Texture *texture, std::vector<unsigned int> indices) {
     this->vertices = std::move(vertices);
     this->texture = texture;
     this->indices = std::move(indices);
@@ -37,7 +38,9 @@ void Mesh::setupMesh() {
 
 void Mesh::draw() {
     setupMesh();
+    ShaderProgram *sp = ProgramState::getInstance()->shadersContainer->getShader(ShadersType::TEXTURED);
     glBindVertexArray(VAO);
+    texture->bind(sp);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
     glDeleteBuffers(1, &VBO);
