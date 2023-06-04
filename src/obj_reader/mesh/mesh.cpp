@@ -7,7 +7,6 @@ Mesh::Mesh(std::vector<Vertex> vertices, Texture texture, std::vector<unsigned i
     this->texture = texture;
     this->indices = std::move(indices);
 
-    setupMesh();
 }
 
 void Mesh::setupMesh() {
@@ -36,8 +35,12 @@ void Mesh::setupMesh() {
     glBindVertexArray(0);
 }
 
-void Mesh::Draw(ShaderProgram &shader) {
+void Mesh::draw() {
+    setupMesh();
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &VAO);
 }

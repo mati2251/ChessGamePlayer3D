@@ -15,7 +15,7 @@ public:
 
     Mesh(std::vector <Vertex> vertices,Texture texture, std::vector<unsigned int> indices);
 
-    void Draw(ShaderProgram &shader);
+    void draw();
 
 private:
     unsigned int VAO, VBO, EBO;

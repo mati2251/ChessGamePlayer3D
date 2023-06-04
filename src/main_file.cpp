@@ -4,12 +4,15 @@
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <cstdio>
+#include <string>
 #include "../include/glm/glm.hpp"
 #include "../include/glm/gtc/type_ptr.hpp"
 #include "chessboard/chessboard.h"
+#include "obj_reader/obj_reader.h"
 
 float aspectRatio = 1;
 ProgramState *programState;
+ObjReader *objReader;
 
 void error_callback(int error, const char *description) {
     fputs(description, stderr);
@@ -30,6 +33,7 @@ void initOpenGLProgram(GLFWwindow *window) {
     glEnable(GL_DEPTH_TEST);
     glfwSetWindowSizeCallback(window, windowResizeCallback);
     programState = ProgramState::getInstance();
+    objReader = new ObjReader("../resources/pawn.obj");
     glfwSetKeyCallback(window, keyCallback);
 }
 
@@ -41,6 +45,8 @@ void drawScene(GLFWwindow *window) {
     Chessboard chessboard;
     programState->rotateController->rotateM();
     chessboard.draw(programState->M);
+    glm::mat4 pawn = glm::translate(programState->M, glm::vec3(0, 0, 0.5));
+    objReader->draw(pawn);
     glfwSwapBuffers(window);
 }
 
