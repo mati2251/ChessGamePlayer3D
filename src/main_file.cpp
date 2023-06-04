@@ -7,11 +7,12 @@
 #include "../include/glm/glm.hpp"
 #include "../include/glm/gtc/type_ptr.hpp"
 #include "chessboard/chessboard.h"
-#include "obj_reader/obj_reader.h"
+#include "figure/figure.h"
+#include "game/game.h"
 
 float aspectRatio = 1;
 ProgramState *programState;
-ObjReader *objReader;
+Game *game;
 
 void error_callback(int error, const char *description) {
     fputs(description, stderr);
@@ -19,6 +20,9 @@ void error_callback(int error, const char *description) {
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     programState->rotateController->keyCallback(window, key, scancode, action, mods);
+    if(key==GLFW_KEY_SPACE && action==GLFW_PRESS){
+        game->nextMove();
+    }
 }
 
 void windowResizeCallback(GLFWwindow *window, int width, int height) {
@@ -31,8 +35,8 @@ void initOpenGLProgram(GLFWwindow *window) {
     glClearColor(0.7, 0.7, 0.7, 1);
     glEnable(GL_DEPTH_TEST);
     glfwSetWindowSizeCallback(window, windowResizeCallback);
+    game = new Game();
     programState = ProgramState::getInstance();
-    objReader = new ObjReader("../resources/pawn.obj", "../resources/wood_black.png");
     glfwSetKeyCallback(window, keyCallback);
 }
 
@@ -44,8 +48,7 @@ void drawScene(GLFWwindow *window) {
     Chessboard chessboard;
     programState->rotateController->rotateM();
     chessboard.draw(programState->M);
-    glm::mat4 pawn = glm::translate(programState->M, glm::vec3(0, 0, 0.5));
-    objReader->draw(pawn);
+    game->draw();
     glfwSwapBuffers(window);
 }
 

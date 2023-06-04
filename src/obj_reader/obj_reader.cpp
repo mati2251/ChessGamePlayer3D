@@ -15,6 +15,13 @@ ObjReader::ObjReader(const std::string &filePath, const char *texturePath) {
     loadModel(filePath);
 }
 
+ObjReader::ObjReader(const std::string &filePath, Texture *texture) {
+    this->shader = ProgramState::getInstance()->shadersContainer->getShader(ShadersType::TEXTURED);
+    this->texture = texture;
+    loadModel(filePath);
+
+}
+
 void ObjReader::loadModel(const std::string &filePath) {
     Assimp::Importer import;
     const aiScene *scene = import.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);

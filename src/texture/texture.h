@@ -2,7 +2,6 @@
 #define ASTEROID_3D_TEXTURE_H
 
 
-#include <GL/gl.h>
 #include "shaderprogram/shaderprogram.h"
 #include <vector>
 #include <GL/glew.h>

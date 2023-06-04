@@ -19,6 +19,7 @@
 class ObjReader {
 public:
     ObjReader(const std::string &filePath, const char *texturePath);
+    ObjReader(const std::string &filePath, Texture *texture);
     void draw(glm::mat4 M);
 private:
     ShaderProgram *shader;
