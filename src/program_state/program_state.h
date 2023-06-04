@@ -3,6 +3,8 @@
 #include "../../include/glm/gtc/type_ptr.hpp"
 #include "../shaders_container/shaders_container.h"
 #include "rotate_controller/rotate_controller.h"
+#include "texture_container/texture_container.h"
+#include "game/game.h"
 
 class ProgramState {
 private:
@@ -15,6 +17,7 @@ public:
     glm::mat4 M;
     RotateController *rotateController;
     ShadersContainer *shadersContainer;
+    TextureContainer *textureContainer;
     static ProgramState *getInstance();
 };
 

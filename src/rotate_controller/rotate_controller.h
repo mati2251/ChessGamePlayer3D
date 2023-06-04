@@ -11,6 +11,7 @@ class RotateController{
     float angleZ = 0;
     float angleY = 0;
     glm::mat4 &M;
+    glm::mat4 M_orginal;
 public:
     void keyCallback(GLFWwindow* window,int key,int scancode,int action,int mods);
     void rotateM();

@@ -9,8 +9,10 @@ ProgramState::ProgramState() {
     this->M = glm::translate(this->M, glm::vec3(0.0f, -2.0f, 0.0f));
     this->M = glm::scale(this->M, glm::vec3(0.75f, 0.75f, 0.75f));
     this->M = glm::rotate(this->M, (float)-M_PI_2, glm::vec3(1.0f, 0.0f, 0.0));
+    this->M = glm::rotate(this->M, (float)M_PI_2, glm::vec3(0.0f, 0.0f, 1.0));
     this->rotateController = new RotateController(this->M);
     this->shadersContainer = new ShadersContainer(this->P, this->V);
+    this->textureContainer = new TextureContainer();
 }
 
 ProgramState *ProgramState::getInstance() {

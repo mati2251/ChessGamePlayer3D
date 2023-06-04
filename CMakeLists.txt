@@ -20,7 +20,14 @@ set(SOURCES
         src/shaders_container/shaders_container.cpp
         src/program_state/program_state.cpp
         src/vec4_to_array/vec4_to_array.cpp
-        src/rotate_controller/rotate_controller.cpp src/obj_reader/obj_reader.cpp src/obj_reader/obj_reader.h src/obj_reader/mesh/mesh.cpp src/obj_reader/mesh/mesh.h src/structurs/vertex.h src/texture/texture.cpp src/texture/texture.h src/lodepng/lodepng.cpp src/lodepng/lodepng.h)
+        src/rotate_controller/rotate_controller.cpp
+        src/obj_reader/obj_reader.cpp
+        src/obj_reader/mesh/mesh.cpp
+        src/texture/texture.cpp
+        src/lodepng/lodepng.cpp
+        src/figure/figure.cpp
+        src/texture_container/texture_container.cpp
+        src/game/game.cpp src/game/game.h)
 
 add_executable(main_file ${SOURCES})
 
