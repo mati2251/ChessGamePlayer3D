@@ -43,5 +43,6 @@ void Chessboard::copyMandTransform(glm::mat4 M) {
     sp->use();
     this->obj = glm::rotate(M, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0));
     this->obj = glm::rotate(this->obj, glm::radians(270.0f), glm::vec3(1.0f, 0.0f, 0.0));
+    this->obj = glm::rotate(this->obj, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0));
     glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(this->obj));
 }
