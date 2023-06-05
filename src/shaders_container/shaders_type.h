@@ -1,4 +1,3 @@
 enum ShadersType{
-    COLORED,
     TEXTURED,
 };

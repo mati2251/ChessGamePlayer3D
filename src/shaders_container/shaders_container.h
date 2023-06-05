@@ -6,7 +6,6 @@
 #include "../../include/glm/gtc/type_ptr.hpp"
 
 class ShadersContainer {
-    ShaderProgram *colored;
     ShaderProgram *textured;
     glm::mat4 P;
     glm::mat4 V;

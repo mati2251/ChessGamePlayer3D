@@ -47,7 +47,7 @@ void drawScene(GLFWwindow *window) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Chessboard chessboard;
     programState->rotateController->rotateM();
-    chessboard.draw(programState->M);
+    chessboard.draw(glm::mat4(programState->M));
     game->draw();
     glfwSwapBuffers(window);
 }
