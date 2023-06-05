@@ -16,10 +16,8 @@ set(SOURCES
         src/main_file.cpp
         src/shaderprogram/shaderprogram.cpp
         src/chessboard/chessboard.cpp
-        src/colored_model/colored_model.cpp
         src/shaders_container/shaders_container.cpp
         src/program_state/program_state.cpp
-        src/vec4_to_array/vec4_to_array.cpp
         src/rotate_controller/rotate_controller.cpp
         src/obj_reader/obj_reader.cpp
         src/obj_reader/mesh/mesh.cpp

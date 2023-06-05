@@ -3,10 +3,7 @@
 
 
 #include <vector>
-#include "model/model.h"
-#include "../colored_model/colored_model.h"
 #include "../program_state/program_state.h"
-#include "../vec4_to_array/vec4_to_array.h"
 
 class Chessboard {
     Mesh *mesh;

@@ -2,8 +2,6 @@
 
 ShaderProgram *ShadersContainer::getShader(ShadersType type) {
     switch (type) {
-        case ShadersType::COLORED :
-            return this->colored;
         case ShadersType::TEXTURED :
             return this->textured;
     }
@@ -15,9 +13,6 @@ ShadersContainer::ShadersContainer(glm::mat4 P, glm::mat4 V) {
     this->V = V;
     this->textured = new ShaderProgram("../src/shaders/textured/v_textured.glsl", NULL,
                                        "../src/shaders/textured/f_textured.glsl");
-    this->colored = new ShaderProgram("../src/shaders/colored/v_colored.glsl", NULL,
-                                      "../src/shaders/colored/f_colored.glsl");
-    this->initShader(this->colored);
     this->initShader(this->textured);
 }
 
@@ -28,6 +23,5 @@ void ShadersContainer::initShader(ShaderProgram *shader) {
 }
 
 ShadersContainer::~ShadersContainer() {
-    delete this->colored;
     delete this->textured;
 }
