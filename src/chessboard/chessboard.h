@@ -8,21 +8,16 @@
 #include "../program_state/program_state.h"
 #include "../vec4_to_array/vec4_to_array.h"
 
-class Chessboard: Model {
-    ColoredModel *coloredModel;
-    std::vector<float> vertices;
-    std::vector<float> colors;
-    std::vector<float> normals = {};
-    int vertexCount = 36;
-    void addSquareToDraw(glm::vec4 p1, glm::vec4 p2, glm::vec4 p3, glm::vec4 p4, glm::vec4 color);
-    void addRowToDraw(float y, bool startFromBlack = false);
+class Chessboard {
+    Mesh *mesh;
+    std::vector<Vertex> vertices;
+    Texture *texture;
     void addChessboardToDraw();
-    void addCaseToDraw();
     void copyMandTransform(glm::mat4 M);
 public:
     Chessboard();
     glm::mat4 obj;
-    void draw(glm::mat4 M) override;
+    void draw(glm::mat4 M);
 };
 
 
