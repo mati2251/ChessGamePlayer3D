@@ -1,4 +1,6 @@
 #include "game.h"
+#include <fstream>
+#include <sstream>
 
 Game::Game() {
     this->figures.emplace_back(TOWER, Figure::Position{'a', '1'}, true);
@@ -33,7 +35,11 @@ void Game::draw() {
 }
 
 void Game::nextMove() {
-    this->makeMove(Figure::Position{'a', '2'}, Figure::Position{'a', '7'});
+    if (!moves.empty()) {
+        ChessMove move = moves.top();
+        moves.pop();
+        makeMove(Figure::Position{move.from[0], move.from[1]}, Figure::Position{move.to[0], move.to[1]});
+    }
 }
 
 void Game::makeMove(Figure::Position from, Figure::Position to) {
@@ -49,4 +55,30 @@ void Game::makeMove(Figure::Position from, Figure::Position to) {
             break;
         }
     }
+}
+
+void Game::loadPGNFile(const std::string& filePath) {
+    std::ifstream file(filePath);
+    std::string line;
+
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string moveNumber, whiteMove, blackMove;
+
+        iss >> moveNumber >> whiteMove >> blackMove;
+
+        if (whiteMove.find('x') != std::string::npos) { // Capture
+            moves.push(ChessMove(whiteMove.substr(0, 2), whiteMove.substr(3, 2), true, whiteMove[0]));
+        } else { // Normal move
+            moves.push(ChessMove(whiteMove.substr(0, 2), whiteMove.substr(2, 2), false, whiteMove[0]));
+        }
+
+        if (blackMove.find('x') != std::string::npos) { // Capture
+            moves.push(ChessMove(blackMove.substr(0, 2), blackMove.substr(3, 2), true, blackMove[0]));
+        } else { // Normal move
+            moves.push(ChessMove(blackMove.substr(0, 2), blackMove.substr(2, 2), false, blackMove[0]));
+        }
+    }
+
+    file.close();
 }
