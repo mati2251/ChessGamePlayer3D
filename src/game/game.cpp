@@ -67,15 +67,15 @@ void Game::loadPGNFile(const std::string& filePath) {
 
         iss >> moveNumber >> whiteMove >> blackMove;
 
-        if (whiteMove.find('x') != std::string::npos) { // Capture
+        if (whiteMove.find('x') != std::string::npos) { 
             moves.push(ChessMove(whiteMove.substr(0, 2), whiteMove.substr(3, 2), true, whiteMove[0]));
-        } else { // Normal move
+        } else {
             moves.push(ChessMove(whiteMove.substr(0, 2), whiteMove.substr(2, 2), false, whiteMove[0]));
         }
 
-        if (blackMove.find('x') != std::string::npos) { // Capture
+        if (blackMove.find('x') != std::string::npos) { 
             moves.push(ChessMove(blackMove.substr(0, 2), blackMove.substr(3, 2), true, blackMove[0]));
-        } else { // Normal move
+        } else { 
             moves.push(ChessMove(blackMove.substr(0, 2), blackMove.substr(2, 2), false, blackMove[0]));
         }
     }
