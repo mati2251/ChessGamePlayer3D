@@ -13,6 +13,7 @@
 float aspectRatio = 1;
 ProgramState *programState;
 Game *game;
+std::string fileName;
 
 void error_callback(int error, const char *description) {
     fputs(description, stderr);
@@ -20,7 +21,7 @@ void error_callback(int error, const char *description) {
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     programState->rotateController->keyCallback(window, key, scancode, action, mods);
-    if(key==GLFW_KEY_SPACE && action==GLFW_PRESS){
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         game->nextMove();
     }
 }
@@ -38,7 +39,7 @@ void initOpenGLProgram(GLFWwindow *window) {
     game = new Game();
     programState = ProgramState::getInstance();
     glfwSetKeyCallback(window, keyCallback);
-    game->loadGameFile("../resources/game.txt");
+    game->loadGameFile(fileName);
 }
 
 void freeOpenGLProgram(GLFWwindow *window) {
@@ -53,7 +54,12 @@ void drawScene(GLFWwindow *window) {
     glfwSwapBuffers(window);
 }
 
-int main(void) {
+int main(int argc, char **argv) {
+    if(argc != 2) {
+        printf("Usage: ./chess <game_file>\n");
+        exit(EXIT_FAILURE);
+    }
+    fileName = argv[1];
     GLFWwindow *window;
 
     glfwSetErrorCallback(error_callback);

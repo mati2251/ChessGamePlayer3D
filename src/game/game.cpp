@@ -6,8 +6,8 @@ Game::Game() {
     this->figures.emplace_back(TOWER, Figure::Position{'a', '1'}, true);
     this->figures.emplace_back(HORSE, Figure::Position{'b', '1'}, true);
     this->figures.emplace_back(RUNNER, Figure::Position{'c', '1'}, true);
-    this->figures.emplace_back(KING, Figure::Position{'d', '1'}, true);
-    this->figures.emplace_back(QUEEN, Figure::Position{'e', '1'}, true);
+    this->figures.emplace_back(QUEEN, Figure::Position{'d', '1'}, true);
+    this->figures.emplace_back(KING, Figure::Position{'e', '1'}, true);
     this->figures.emplace_back(RUNNER, Figure::Position{'f', '1'}, true);
     this->figures.emplace_back(HORSE, Figure::Position{'g', '1'}, true);
     this->figures.emplace_back(TOWER, Figure::Position{'h', '1'}, true);
@@ -18,8 +18,8 @@ Game::Game() {
     this->figures.emplace_back(TOWER, Figure::Position{'a', '8'}, false);
     this->figures.emplace_back(HORSE, Figure::Position{'b', '8'}, false);
     this->figures.emplace_back(RUNNER, Figure::Position{'c', '8'}, false);
-    this->figures.emplace_back(KING, Figure::Position{'d', '8'}, false);
-    this->figures.emplace_back(QUEEN, Figure::Position{'e', '8'}, false);
+    this->figures.emplace_back(QUEEN, Figure::Position{'d', '8'}, false);
+    this->figures.emplace_back(KING, Figure::Position{'e', '8'}, false);
     this->figures.emplace_back(RUNNER, Figure::Position{'f', '8'}, false);
     this->figures.emplace_back(HORSE, Figure::Position{'g', '8'}, false);
     this->figures.emplace_back(TOWER, Figure::Position{'h', '8'}, false);
