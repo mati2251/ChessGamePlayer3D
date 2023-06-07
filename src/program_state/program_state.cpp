@@ -3,7 +3,7 @@
 ProgramState *ProgramState::instance = nullptr;
 
 ProgramState::ProgramState() {
-    this->V = glm::lookAt(glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    this->V = glm::lookAt(glm::vec3(0.0f, 0.0f, -12.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     this->P = glm::perspective(glm::radians(50.0f), 1.0f, 1.0f, 50.0f);
     this->M = glm::mat4(1.0f);
     this->M = glm::translate(this->M, glm::vec3(0.0f, -2.0f, 0.0f));

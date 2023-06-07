@@ -25,7 +25,8 @@ set(SOURCES
         src/lodepng/lodepng.cpp
         src/figure/figure.cpp
         src/texture_container/texture_container.cpp
-        src/game/game.cpp src/game/game.h)
+        src/game/game.cpp
+        src/chessmove/chessmove.cpp)
 
 add_executable(main_file ${SOURCES})
 
