@@ -1,52 +1,104 @@
-1.e2-e4 c7-c5
-2.c2-c3 e7-e6
-3.d2-d4 d7-d5
-4.e4xd5 e6xd5
-5.g1-f3 c8-d6
-6.c1-e3 c5-c4
-7.b2-b3 c4xb3
-8.a2xb3 g8-e7
-9.b1-a3 b8-c6
-10.a3-b5 d6-b8
-11.e2-d3 c8-f5
-12.c3-c4 g8-g8
-13.a1-a4 d8-d7
-14.b5-c3 f5xd3
-15.d3xf5 d7xf5
-16.f3-h4 f5xd7
-17.g1-g1 a8-d8
-18.e1-e1 e8-e8
-19.c4-c5 b8-a5
-20.d1-d3 a7-a6
-21.h2-h3 a5xc3
-22.d3xc3 e7xf5
-23.h4xf5 d7xf5
-24.a4-a2 e8-e6
-25.a2-e2 d8-e8
-26.c3-d2 f7-f6
-27.d2-c3 h7-h5
-28.b3-b4 e8-e7
-29.g1-h1 g7-g5
-30.h1-g1 g5-g4
-31.h3-h4 e4-e4
-32.c3-b2 c6-a7
-33.b2-d2 e4-e6
-34.d2-c1 a7-b5
-35.c1-d2 b5-a3
-36.d2-d1 g8-f7
-37.d1-b3 a3xc4
-38.g1-h2 e4xe4
-39.g2-g3 f5xf3
-40.b4-b5 a6-a5
-41.c5-c6 f6-f5
-42.c6xb7 e7xb7
-43.h2-g1 f5xf4
-44.g3xf4 g4-g3
-45.d1-d1 b7-e7
-46.b5-b6 g3xf2
-47.e2xf2 f3xd1
-48.d1xd1 e4xe3
-49.g2-g2 c4xb6
-50.g2-g5 a5-a4
-51.g5xh5 a4-a3
-52.d2-d2 e3-e2
+e2-e4
+c7-c5
+c2-c3
+e7-e6
+d2-d4
+d7-d5
+e4xd5
+e6xd5
+g1-f3
+c8-d6
+c1-e3
+c5-c4
+b2-b3
+c4xb3
+a2xb3
+g8-e7
+b1-a3
+b8-c6
+a3-b5
+d6-b8
+e2-d3
+c8-f5
+c3-c4
+g8-g8
+a1-a4
+d8-d7
+b5-c3
+f5xd3
+d3xf5
+d7xf5
+f3-h4
+f5xd7
+g1-g1
+a8-d8
+e1-e1
+e8-e8
+c4-c5
+b8-a5
+d1-d3
+a7-a6
+h2-h3
+a5xc3
+d3xc3
+e7xf5
+h4xf5
+d7xf5
+a4-a2
+e8-e6
+a2-e2
+d8-e8
+c3-d2
+f7-f6
+d2-c3
+h7-h5
+b3-b4
+e8-e7
+g1-h1
+g7-g5
+h1-g1
+g5-g4
+h3-h4
+e4-e4
+c3-b2
+c6-a7
+b2-d2
+e4-e6
+d2-c1
+a7-b5
+c1-d2
+b5-a3
+d2-d1
+g8-f7
+d1-b3
+a3xc4
+g1-h2
+e4xe4
+g2-g3
+f5xf3
+b4-b5
+a6-a5
+c5-c6
+f6-f5
+c6xb7
+e7xb7
+h2-g1
+f5xf4
+g3xf4
+g4-g3
+d1-d1
+b7-e7
+b5-b6
+g3xf2
+e2xf2
+f3xd1
+d1xd1
+e4xe3
+g2-g2
+c4xb6
+g2-g5
+a5-a4
+g5xh5
+a4-a3
+d2-d2
+e3-e2

@@ -2,11 +2,12 @@
 #define CHESS_MOVE_H
 
 #include <string>
+#include "../figure/figure.h"
 
 class ChessMove {
 public:
-    std::string from;
-    std::string to;
+    Figure::Position from;
+    Figure::Position to;
     bool isCapture;
 
     ChessMove(std::string  from, std::string  to, bool isCapture);

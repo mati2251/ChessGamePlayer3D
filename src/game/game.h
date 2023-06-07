@@ -14,8 +14,8 @@ public:
     std::queue<ChessMove> moves;
     void draw();
     void nextMove();
-    void makeMove(Figure::Position from, Figure::Position to);
-    void loadPGNFile(const std::string& filePath);
+    void makeMove(ChessMove move);
+    void loadGameFile(const std::string& filePath);
 };
 
 #endif //ASTEROID_3D_GAME_H

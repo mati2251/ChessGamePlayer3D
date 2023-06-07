@@ -29,7 +29,7 @@ Game::Game() {
 }
 
 void Game::draw() {
-    for(auto &figure : this->figures) {
+    for (auto &figure: this->figures) {
         figure.draw();
     }
 }
@@ -38,46 +38,50 @@ void Game::nextMove() {
     if (!moves.empty()) {
         ChessMove move = moves.front();
         moves.pop();
-        makeMove(Figure::Position{move.from[0], move.from[1]}, Figure::Position{move.to[0], move.to[1]});
+        makeMove(move);
     }
 }
 
-void Game::makeMove(Figure::Position from, Figure::Position to) {
-    for (auto &figure : this->figures) {
-        if (figure.position.x == to.x && figure.position.y == to.y) {
+void Game::makeMove(ChessMove move) {
+    bool toCapture = move.isCapture;
+    for (auto &figure: this->figures) {
+        if (figure.position.x == move.to.x && figure.position.y == move.to.y) {
             this->figures.erase(std::remove(this->figures.begin(), this->figures.end(), figure), this->figures.end());
+            toCapture = false;
             break;
         }
     }
-    for (auto &figure : this->figures) {
-        if (figure.position.x == from.x && figure.position.y == from.y) {
-            figure.makeMove(to);
+    if (toCapture) {
+        for (auto &figure: this->figures) {
+            if (figure.position.x == move.to.x && figure.position.y == move.to.y - 1) {
+                this->figures.erase(std::remove(this->figures.begin(), this->figures.end(), figure),
+                                    this->figures.end());
+                break;
+            }
+        }
+    }
+    for (auto &figure: this->figures) {
+        if (figure.position.x == move.from.x && figure.position.y == move.from.y) {
+            figure.makeMove(move.to);
             break;
         }
     }
 }
 
-void Game::loadPGNFile(const std::string& filePath) {
+void Game::loadGameFile(const std::string &filePath) {
     std::ifstream file(filePath);
     std::string line;
 
     while (std::getline(file, line)) {
         std::istringstream iss(line);
-        std::string whiteMove, blackMove;
+        std::string move;
 
-        iss >> whiteMove >> blackMove;
-        whiteMove = whiteMove.substr(whiteMove.find('.') + 1, whiteMove.length());
+        iss >> move;
 
-        if (whiteMove.find('x') != std::string::npos) { 
-            moves.emplace(whiteMove.substr(0, 2), whiteMove.substr(3, 2), true);
+        if (move.find('x') != std::string::npos) {
+            moves.emplace(move.substr(0, 2), move.substr(3, 2), true);
         } else {
-            moves.emplace(whiteMove.substr(0, 2), whiteMove.substr(3, 2), false);
-        }
-
-        if (blackMove.find('x') != std::string::npos) { 
-            moves.emplace(blackMove.substr(0, 2), blackMove.substr(3, 2), true);
-        } else { 
-            moves.emplace(blackMove.substr(0, 2), blackMove.substr(3, 2), false);
+            moves.emplace(move.substr(0, 2), move.substr(3, 2), false);
         }
     }
 

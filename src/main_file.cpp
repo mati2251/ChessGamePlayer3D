@@ -38,7 +38,7 @@ void initOpenGLProgram(GLFWwindow *window) {
     game = new Game();
     programState = ProgramState::getInstance();
     glfwSetKeyCallback(window, keyCallback);
-    game->loadPGNFile("../resources/game.txt");
+    game->loadGameFile("../resources/game.txt");
 }
 
 void freeOpenGLProgram(GLFWwindow *window) {
