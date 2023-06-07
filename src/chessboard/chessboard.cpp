@@ -14,25 +14,25 @@ Chessboard::Chessboard() {
 void Chessboard::addChessboardToDraw() {
     auto v = Vertex{
             glm::vec3(0.0f, -4.5f, -4.5f),
-            glm::vec3(0.0f, 0.0f, 0.0f),
+            glm::vec3(18.0f, 0.0f, 0.0f),
             glm::vec2(0.0f, 0.0f)
     };
     this->vertices.push_back(v);
     v = Vertex{
             glm::vec3(0.0f, 4.5f, -4.5f),
-            glm::vec3(0.0f, 0.0f, 0.0f),
+            glm::vec3(18.0f, 0.0f, 0.0f),
             glm::vec2(0.0f, 1.0f)
     };
     this->vertices.push_back(v);
     v = Vertex{
             glm::vec3(0.0f, 4.5f, 4.5f),
-            glm::vec3(0.0f, 0.0f, 0.0f),
+            glm::vec3(18.0f, 0.0f, 0.0f),
             glm::vec2(1.0f, 1.0f)
     };
     this->vertices.push_back(v);
     v = Vertex{
             glm::vec3(0.0f, -4.5f, 4.5f),
-            glm::vec3(0.0f, 0.0f, 0.0f),
+            glm::vec3(18.0f, 0.0f, 0.0f),
             glm::vec2(1.0f, 0.0f)
     };
     this->vertices.push_back(v);

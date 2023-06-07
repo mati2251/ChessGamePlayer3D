@@ -36,7 +36,7 @@ void Game::draw() {
 
 void Game::nextMove() {
     if (!moves.empty()) {
-        ChessMove move = moves.top();
+        ChessMove move = moves.front();
         moves.pop();
         makeMove(Figure::Position{move.from[0], move.from[1]}, Figure::Position{move.to[0], move.to[1]});
     }
@@ -63,20 +63,21 @@ void Game::loadPGNFile(const std::string& filePath) {
 
     while (std::getline(file, line)) {
         std::istringstream iss(line);
-        std::string moveNumber, whiteMove, blackMove;
+        std::string whiteMove, blackMove;
 
-        iss >> moveNumber >> whiteMove >> blackMove;
+        iss >> whiteMove >> blackMove;
+        whiteMove = whiteMove.substr(whiteMove.find('.') + 1, whiteMove.length());
 
         if (whiteMove.find('x') != std::string::npos) { 
-            moves.push(ChessMove(whiteMove.substr(0, 2), whiteMove.substr(3, 2), true, whiteMove[0]));
+            moves.emplace(whiteMove.substr(0, 2), whiteMove.substr(3, 2), true);
         } else {
-            moves.push(ChessMove(whiteMove.substr(0, 2), whiteMove.substr(2, 2), false, whiteMove[0]));
+            moves.emplace(whiteMove.substr(0, 2), whiteMove.substr(3, 2), false);
         }
 
         if (blackMove.find('x') != std::string::npos) { 
-            moves.push(ChessMove(blackMove.substr(0, 2), blackMove.substr(3, 2), true, blackMove[0]));
+            moves.emplace(blackMove.substr(0, 2), blackMove.substr(3, 2), true);
         } else { 
-            moves.push(ChessMove(blackMove.substr(0, 2), blackMove.substr(2, 2), false, blackMove[0]));
+            moves.emplace(blackMove.substr(0, 2), blackMove.substr(3, 2), false);
         }
     }
 

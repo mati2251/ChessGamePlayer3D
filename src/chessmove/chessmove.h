@@ -8,9 +8,8 @@ public:
     std::string from;
     std::string to;
     bool isCapture;
-    char piece;
 
-    ChessMove(const std::string& from, const std::string& to, bool isCapture, char piece);
+    ChessMove(std::string  from, std::string  to, bool isCapture);
 };
 
 #endif // CHESS_MOVE_H
