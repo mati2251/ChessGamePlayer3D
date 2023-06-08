@@ -1,5 +1,6 @@
 # Chess Game Player 3D
 ## Description
+[Nagranie ekranu z 2023-06-08 12-25-47.webm](https://github.com/RocketSteve/ChessPlayer3D/assets/33762646/5ed3b37d-26fb-4a71-b4af-56fd87fbf684)
 Simple chess player 3D made in OpenGL to learn the basics of the graphic programming.
 ## How to use
 ### The course of game
