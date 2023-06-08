@@ -14,10 +14,8 @@ out vec4 l;
 out vec4 n;
 out vec4 v;
 
-
-
 out vec2 iTexCoord0;
-out vec4 pos;
+out vec3 pos;
 
 void main(void) {
     vec4 ver = vec4(vertex, 1.0);
@@ -26,6 +24,6 @@ void main(void) {
     l = normalize(V * lp - V*M*ver);
     v = normalize(vec4(0, 0, 0, 1) - V * M * ver);
     n = normalize(V * M * vec4(normal,0));
-    pos = ver;
+    pos = vec3(M * vec4(vertex, 1.0));
     iTexCoord0=texCoord;
 }
