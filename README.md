@@ -20,7 +20,7 @@ You can see next move by `space` key.
 - CMake
 - ASSIMP
 ## License
-[GNU GPLv3][LICENSE.txt]
+[GNU GPLv3](LICENSE.txt)
 ## Author
 - Mateusz Karłowski
 - Szymon Tomiak 
